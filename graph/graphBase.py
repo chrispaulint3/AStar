@@ -1,6 +1,7 @@
 from abc import ABC
 from abc import abstractmethod
 from enum import Enum
+from typing import List
 
 
 class VertexType(Enum):
@@ -19,16 +20,40 @@ class Vertex:
         self.val = val
 
     def __str__(self):
-        return str(self.val)
+        info = "{" + str(id(self)) + " nodeData:" + str(self.val) + "}"
+        return info
 
     def __repr__(self):
-        return str(self.val)
+        info = "{" + str(id(self)) + " nodeData:" + str(self.val) + "}"
+        return info
 
 
 class GameVertex(Vertex):
     def __init__(self, val, vertexType=VertexType.normal):
         super(GameVertex, self).__init__(val)
         self.type = vertexType
+
+
+class Feasible(ABC):
+    @abstractmethod
+    def addBarrier(self, barrier):
+        pass
+
+    @abstractmethod
+    def addGoal(self,goal):
+        pass
+
+    @abstractmethod
+    def isFeasible(self,vertex):
+        pass
+
+    @abstractmethod
+    def isEnd(self,vertex):
+        pass
+
+
+
+
 
 
 class Graph:

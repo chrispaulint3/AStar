@@ -1,52 +1,61 @@
 import pygame
-import sys
+#
+# # 初始化pygame
+# pygame.init()
+#
+# # 设置屏幕大小
+# screen = pygame.display.set_mode((640, 480))
+#
+# # 设置基本参数
+# done = False
+# text = ''
+# font = pygame.font.Font(None, 50)
+# input_active = False
+# color_inactive = pygame.Color('lightskyblue3')
+# color_active = pygame.Color('dodgerblue2')
+# input_box_color = color_inactive
+# input_box = pygame.Rect(100, 100, 140, 50)
+#
+# # 游戏主循环
+# while not done:
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             done = True
+#         if event.type == pygame.MOUSEBUTTONDOWN:
+#             # 如果用户点击了输入框
+#             if input_box.collidepoint(event.pos):
+#                 # 切换活动状态
+#                 input_active = not input_active
+#             else:
+#                 input_active = False
+#             # 根据活动状态更改输入框的颜色
+#             input_box_color = color_active if input_active else color_inactive
+#         if event.type == pygame.KEYDOWN:
+#             if input_active:
+#                 if event.key == pygame.K_RETURN:
+#                     print(text)
+#                     text = ''  # Enter后清空文本
+#                 elif event.key == pygame.K_BACKSPACE:
+#                     text = text[:-1]  # 删除最后一个字符
+#                 else:
+#                     text += event.unicode  # 添加输入的字符
+#
+#     # 填充背景
+#     screen.fill((30, 30, 30))
+#
+#     # 渲染文字
+#     txt_surface = font.render(text, True, (255, 255, 255))
+#     # 调整输入框的宽度
+#     input_box.w = max(100, txt_surface.get_width() + 10)
+#
+#     # 绘制输入框和文字
+#     screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+#     pygame.draw.rect(screen, input_box_color, input_box, 2)
+#
+#     # 刷新屏幕
+#     pygame.display.flip()
+#
+# # 结束pygame
+# pygame.quit()
 
-# 初始化pygame
-pygame.init()
 
-# 设置窗口大小
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Draw Graph in Pygame")
-
-# 定义颜色
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-
-# 定义图的数据结构
-# 假设我们的图有三个节点，每个节点有一个位置和它连接的其他节点
-nodes = {
-    "A": {"pos": (100, 100), "edges": ["B", "C"]},
-    "B": {"pos": (400, 400), "edges": ["A", "C"]},
-    "C": {"pos": (700, 100), "edges": ["A", "B"]},
-}
-
-
-def draw_graph():
-    # 绘制边
-    for node, attributes in nodes.items():
-        for edge in attributes["edges"]:
-            pygame.draw.line(screen, BLACK, attributes["pos"], nodes[edge]["pos"], 2)
-
-    # 绘制节点
-    for node, attributes in nodes.items():
-        pygame.draw.circle(screen, RED, attributes["pos"], 20)
-        label = pygame.font.SysFont("Arial", 20).render(node, True, WHITE)
-        screen.blit(label, (attributes["pos"][0] - 10, attributes["pos"][1] - 10))
-
-
-# 游戏循环
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    screen.fill(WHITE)
-    draw_graph()
-
-    pygame.display.flip()
-
-pygame.quit()
-sys.exit()

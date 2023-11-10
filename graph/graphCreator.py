@@ -51,13 +51,17 @@ def createGraphEdge(graphType: GraphType, vertexMat: List[List[GameVertex]]) -> 
 
 
 class GraphCreator(ABC):
-    def __init__(self, rootPos: List[int]):
+    def __init__(self):
         self.mat: List[List[Vertex]] = None
         self.graph: Graph = None
-        self.rootPos: List[int] = rootPos
+        self.rootPos: List[int] = None
 
     @abstractmethod
     def createGraph(self, graphType: GraphType):
+        pass
+
+    @abstractmethod
+    def setRoot(self, rootPos):
         pass
 
     @abstractmethod
@@ -65,23 +69,25 @@ class GraphCreator(ABC):
         pass
 
     @abstractmethod
-    def updateVertexState(self,nodeIndex: tuple[int, int], vertexState: VertexType):
+    def getVertexByInd(self, y, x):
         pass
 
 
 class GridGraphCreator(GraphCreator):
-    def __init__(self, rootPos: List[int]):
-        super().__init__(rootPos)
+    def __init__(self):
+        super().__init__()
 
     def createGraph(self, graphType: GraphType):
         self.mat = createGraphVertex()
         self.graph = createGraphEdge(graphType, self.mat)
 
-    def getRoot(self):
-        return self.mat[self.rootPos[0]][self.rootPos[1]]
+    def setRoot(self, rootPos):
+        self.rootPos = rootPos
 
-    def updateVertexState(self, nodeIndex: tuple[int, int], vertexState: VertexType):
-        if nodeIndex is not None:
-            x = nodeIndex[1]
-            y = nodeIndex[0]
-            self.mat[x][y].type = vertexState
+    def getRoot(self):
+        if self.rootPos is None:
+            return
+        return self.getVertexByInd(self.rootPos[1], self.rootPos[0])
+
+    def getVertexByInd(self, y, x):
+        return self.mat[y][x]

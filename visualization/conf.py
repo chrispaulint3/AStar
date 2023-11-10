@@ -1,6 +1,7 @@
 GAME_CAPTION = "visualize the graph"
-RESOLUTION = (800,600)
+RESOLUTION = (800,800)
 FPS = 60
 RED = (255,0,0)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
+GREEN = (0,255,0)

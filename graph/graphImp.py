@@ -1,6 +1,6 @@
 from abc import ABC
 from typing import List
-from graph.graphBase import Graph
+from graph.graphBase import Graph, Feasible
 from graph.graphBase import Vertex
 from graph.graphBase import GraphType
 
@@ -44,6 +44,31 @@ class graphFactory:
         if type == type.AdjList:
             return AdjList()
 
+
+class GameFeasible(Feasible):
+    def __init__(self):
+        super().__init__()
+        self.barrier: set[Vertex] = set()
+        self.goal = None
+
+    def addBarrier(self, barrier):
+        self.barrier.add(barrier)
+
+    def addGoal(self, goal: Vertex):
+        self.goal = goal
+
+    def isFeasible(self, vertex: Vertex) -> bool:
+        print("判断了")
+        if vertex in self.barrier:
+            return False
+        else:
+            return True
+
+    def isEnd(self, vertex):
+        if self.goal == vertex:
+            return True
+        else:
+            return False
 
 
 if __name__ == "__main__":

@@ -12,19 +12,32 @@ from graph.graphCreator import GridGraphCreator
 from graph.graphCreator import GraphCreator
 from visualization.visualBase import GameSurface
 from visualization.visualBase import UserInterface
+from visualization.visualBase import NormalSurface
+from graph.graphImp import GameFeasible
+from graph.graphBase import Feasible
 from graph.graphBase import VertexType
+from algorithm.graphSearch import getPath
+from algorithm.graphSearch import SearchAlgorithm
+from visualization.visualBase import GameState
 
 import pygame
 
 
 class Visual(GameBase, ABC):
-    def __init__(self, graphCreator: GraphCreator):
+    def __init__(self, graphCreator: GraphCreator, searchAlgo: SearchAlgorithm):
         super(Visual, self).__init__()
-        self.graphCreator = graphCreator
-        self.gameSurface = GameSurface(RESOLUTION, self.graphCreator)
+        self.graphManager = graphCreator
+        self.algo = searchAlgo
+        self.algo.iniGenerator(self.graphManager.getVertexByInd(15, 15))
+
+        self.gameSurface = GameSurface((800, 600), self.graphManager)
+        self.helpSurface = NormalSurface((800, 200))
         self.userInterface = UserInterface()
 
-        self.gen = breadthFirstSearchGenerator(self.graphCreator.graph, self.graphCreator.getRoot())
+        self.currentNode = None
+        self.comeFrom = None
+
+        self.gameState = GameState
 
     def processInput(self):
         for event in pygame.event.get():
@@ -33,27 +46,57 @@ class Visual(GameBase, ABC):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     try:
-                        currentNode = next(self.gen)
-                        pygame.draw.circle(self.gameSurface.surface, RED, currentNode.val, 8)
-                        for neighbour in self.graphCreator.graph.get_neighbours(currentNode):
-                            pygame.draw.line(self.gameSurface.surface, BLACK, currentNode.val, neighbour.val)
-                    except StopIteration:
-                        pass
+                        currentNode, comeFrom = self.algo.next()
+                        self.userInterface.updateComeFrom(comeFrom)
+                        self.userInterface.updateCurrentVertex(currentNode)
+                    except StopIteration as e:
+                        if self.comeFrom is not None:
+                            pass
+                        else:
+                            currentNode, comeFrom = e.value
+                            self.currentNode = currentNode
+                            self.comeFrom = comeFrom
+                    print(self.algo.feasible.barrier)
+                elif event.key == pygame.K_g:
+                    mousePos = pygame.mouse.get_pos()
+                    x, y = findMouseNode(mousePos, 20)
+                    self.userInterface.updateGoal((x, y))
+                elif event.key == pygame.K_s:
+                    mousePos = pygame.mouse.get_pos()
+                    x, y = findMouseNode(mousePos, 20)
+                    self.userInterface.updateStart((x, y))
+                    self.gameState = GameState.START
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
+                if event.button == 3:
                     # process mouse input
                     mousePos = pygame.mouse.get_pos()
                     x, y = findMouseNode(mousePos, 20)
-                    print(x,y)
+                    vertex = self.graphManager.getVertexByInd(x,y)
                     self.userInterface.updateBarrier((x, y))
+                    self.algo.feasible.addBarrier(vertex)
+
+                elif event.button == 1:
+                    mousePos = pygame.mouse.get_pos()
+                    x, y = findMouseNode(mousePos, 20)
+                    self.userInterface.updatePathTarget((x, y))
 
     def update(self):
-        self.graphCreator.updateVertexState(self.userInterface.barrier,VertexType.barrier)
-        self.gameSurface.update(self.userInterface.barrier)
-        pass
+        # if self.gameState == GameState.READY:
+        #     pass
+        # # graph update
+        # elif self.gameState == GameState.START:
+        #     x, y = self.userInterface.startVertex
+        #     vertex = self.graphManager.getVertexByInd(y,x)
+        #     self.algo.iniGenerator(vertex)
+        #     self.gameState = GameState.FIND
+        # elif self.gameState == GameState.FIND:
+        #     pass
+
+        self.gameSurface.update(self.userInterface)
 
     def render(self):
         self._screen.blit(self.gameSurface.surface, (0, 0))
+        self._screen.blit(self.helpSurface.surface, (0, 600))
         pygame.display.update()
         self._clock.tick(FPS)
 
@@ -64,9 +107,15 @@ class Visual(GameBase, ABC):
             self.render()
 
 
-if __name__ == "__main__":
-    graphCreator = GridGraphCreator([15, 15])
-    graphCreator.createGraph(GraphType.AdjList)
-    game = Visual(graphCreator)
+def main():
+    feasible = GameFeasible()
+    graph = GridGraphCreator()
+    graph.createGraph(GraphType.AdjList)
+    algorithm = SearchAlgorithm(graph.graph, feasible)
+    game = Visual(graph, algorithm)
     game.run()
     pygame.quit()
+
+
+if __name__ == "__main__":
+    main()

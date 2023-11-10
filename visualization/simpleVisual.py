@@ -37,15 +37,12 @@ class Visual(GameBase):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     try:
-                        print("按下")
                         currentNode = next(self.gen)
                         pygame.draw.circle(self.surface, RED, currentNode.val, 20)
                         for neighbour in self.mat.get_neighbours(currentNode):
                             pygame.draw.line(self.surface, BLACK, currentNode.val, neighbour.val)
                     except StopIteration:
                         pass
-
-
 
     def update(self):
         pass

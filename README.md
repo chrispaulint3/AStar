@@ -42,3 +42,5 @@ GameBase: -
 GameBase:
 GameBase:
 ```
+
+额外的交互元素需要pygame_gui pip install pygame_gui
