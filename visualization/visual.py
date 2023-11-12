@@ -19,7 +19,6 @@ from graph.graphBase import VertexType
 from algorithm.graphSearch import getPath
 from algorithm.graphSearch import SearchAlgorithm
 from visualization.visualBase import GameState
-
 import pygame
 
 
@@ -56,7 +55,6 @@ class Visual(GameBase, ABC):
                             currentNode, comeFrom = e.value
                             self.currentNode = currentNode
                             self.comeFrom = comeFrom
-                    print(self.algo.feasible.barrier)
                 elif event.key == pygame.K_g:
                     mousePos = pygame.mouse.get_pos()
                     x, y = findMouseNode(mousePos, 20)
@@ -71,7 +69,7 @@ class Visual(GameBase, ABC):
                     # process mouse input
                     mousePos = pygame.mouse.get_pos()
                     x, y = findMouseNode(mousePos, 20)
-                    vertex = self.graphManager.getVertexByInd(x,y)
+                    vertex = self.graphManager.getVertexByInd(y, x)
                     self.userInterface.updateBarrier((x, y))
                     self.algo.feasible.addBarrier(vertex)
 
@@ -81,18 +79,8 @@ class Visual(GameBase, ABC):
                     self.userInterface.updatePathTarget((x, y))
 
     def update(self):
-        # if self.gameState == GameState.READY:
-        #     pass
-        # # graph update
-        # elif self.gameState == GameState.START:
-        #     x, y = self.userInterface.startVertex
-        #     vertex = self.graphManager.getVertexByInd(y,x)
-        #     self.algo.iniGenerator(vertex)
-        #     self.gameState = GameState.FIND
-        # elif self.gameState == GameState.FIND:
-        #     pass
-
         self.gameSurface.update(self.userInterface)
+        self.helpSurface.updateGameMessage(self.userInterface)
 
     def render(self):
         self._screen.blit(self.gameSurface.surface, (0, 0))

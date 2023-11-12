@@ -22,10 +22,12 @@ class SearchAlgorithm:
         comeFrom[self.vertex] = None
         while not frontier.empty():
             currentVertex = frontier.get()
+            if not self.feasible.isFeasible(currentVertex):
+                continue
             if self.feasible.isEnd(currentVertex):
                 return currentVertex, comeFrom
             for neighbour in self.graph.get_neighbours(currentVertex):
-                if neighbour not in reached and self.feasible.isFeasible(currentVertex):
+                if neighbour not in reached:
                     frontier.put(neighbour)
                     reached.add(neighbour)
                     comeFrom[neighbour] = currentVertex

@@ -74,7 +74,7 @@ class UserInterface:
     def updateStart(self, start: tuple[int, int]):
         self.startVertex = start
 
-    def updatePathTarget(self, pathTarget: dict[Vertex, Vertex]):
+    def updatePathTarget(self, pathTarget: tuple[int, int]):
         self.pathTarget = pathTarget
 
     def updateComeFrom(self, comeFrom: dict[Vertex, Vertex]):
@@ -136,7 +136,7 @@ class NormalSurface:
         self.message = ["keyboard usage", "g: set goal", "s: set start point", "c: reset",
                         "mouse right button: add barrier"
             , "mouse left button: show path"]
-        self.gameMessage = []
+        self.gameMessage = ["start vertex: "]
         self.initSurface()
 
     def initSurface(self):
@@ -145,5 +145,11 @@ class NormalSurface:
             text = self.font.render(msg, True, BLACK)
             self.surface.blit(text, (0, ind * 30))
 
-    def updateGameMessage(self):
+        for ind, msg in enumerate(self.gameMessage):
+            text = self.font.render(msg, True, BLACK)
+            self.surface.blit(text, (200, ind * 30))
+
+    def updateGameMessage(self, userInterFace: UserInterface):
+        if userInterFace.startVertex is not None:
+            pass
         pass
